@@ -241,7 +241,7 @@ if ($aioConfig.PowerShellModules.Count -ne 0) {
         Install-Module -Name $module -Force -Confirm:$false
     }
     # Temporary pin-down due to regression: https://github.com/microsoft/azure_arc/pull/2762
-    Install-Module Az.ConnectedKubernetes -Repository PSGallery -Force -AllowClobber -ErrorAction Stop -RequiredVersion 0.10.3
+    # Install-Module Az.ConnectedKubernetes -Repository PSGallery -Force -AllowClobber -ErrorAction Stop -RequiredVersion 0.10.3
 }
 
 # Register Azure providers
