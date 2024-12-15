@@ -53,19 +53,10 @@ else {
     $networkplugin = "flannel"
 }
 
-##############################################################
-# AKS EE setup
-##############################################################
-Write-Host "[$(Get-Date -Format t)] INFO: Fetching the latest AKS Edge Essentials release." -ForegroundColor DarkGreen
-
-$url = "https://raw.githubusercontent.com/Azure/AKS-Edge/main/tools/scripts/AksEdgeQuickStart/AksEdgeQuickStartForAio.ps1"
-Invoke-WebRequest -Uri $url -OutFile .\AksEdgeQuickStartForAio.ps1
-Unblock-File .\AksEdgeQuickStartForAio.ps1
-Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
-$ARC_APP_OBJECT_ID=(az ad sp show --id bc313c14-388c-4e7d-a58e-70017303ee3b --query id -o tsv)
-write-host "customLocationRPOID = $customLocationRPOID"
-write-host "ARC_APP_OBJECT_ID = $ARC_APP_OBJECT_ID"
-.\AksEdgeQuickStartForAio.ps1 -SubscriptionId $subscriptionId -TenantId $spnTenantId -ResourceGroupName $resourceGroup  -Location $location  -ClusterName $arcClusterName -CustomLocationOid $ARC_APP_OBJECT_ID
+# ##############################################################
+# # AKS EE setup
+# ##############################################################
+# Write-Host "[$(Get-Date -Format t)] INFO: Fetching the latest AKS Edge Essentials release." -ForegroundColor DarkGreen
 
 # $latestReleaseTag = (Invoke-WebRequest $aksEEReleasesUrl | ConvertFrom-Json)[0].tag_name
 # $AKSEEReleaseDownloadUrl = "https://github.com/Azure/AKS-Edge/archive/refs/tags/$latestReleaseTag.zip"
@@ -177,11 +168,11 @@ write-host "ARC_APP_OBJECT_ID = $ARC_APP_OBJECT_ID"
 #     }
 # }
 
-Write-Host "`n"
-Write-Host "[$(Get-Date -Format t)] INFO: Checking kubernetes nodes" -ForegroundColor DarkGray
-Write-Host "`n"
-kubectl get nodes -o wide
-Write-Host "`n"
+# Write-Host "`n"
+# Write-Host "[$(Get-Date -Format t)] INFO: Checking kubernetes nodes" -ForegroundColor DarkGray
+# Write-Host "`n"
+# kubectl get nodes -o wide
+# Write-Host "`n"
 
 # az version
 az -v
@@ -263,6 +254,31 @@ if ($aioConfig.AzureProviders.Count -ne 0) {
 }
 Write-Host "[$(Get-Date -Format t)] INFO: Azure PowerShell configuration and resource provider registration complete!" -ForegroundColor Green
 Write-Host
+
+# ##############################################################
+# # AKS EE setup
+# ##############################################################
+Write-Host "[$(Get-Date -Format t)] INFO: Fetching the latest AKS Edge Essentials release." -ForegroundColor DarkGreen
+
+$url = "https://raw.githubusercontent.com/Azure/AKS-Edge/main/tools/scripts/AksEdgeQuickStart/AksEdgeQuickStartForAio.ps1"
+Invoke-WebRequest -Uri $url -OutFile .\AksEdgeQuickStartForAio.ps1
+Unblock-File .\AksEdgeQuickStartForAio.ps1
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+.\AksEdgeQuickStartForAio.ps1 -SubscriptionId $subscriptionId -TenantId $spnTenantId -ResourceGroupName $resourceGroup  -Location $location  -ClusterName $arcClusterName -CustomLocationOid $customLocationRPOID
+
+Write-Host "`n"
+Write-Host "[$(Get-Date -Format t)] INFO: ubernetes installed" -ForegroundColor DarkGray
+Write-Host "`n"
+
+Start-Sleep -Seconds 60
+
+Write-Host "`n"
+Write-Host "[$(Get-Date -Format t)] INFO: Checking kubernetes nodes" -ForegroundColor DarkGray
+Write-Host "`n"
+kubectl get nodes -o wide
+Write-Host "`n"
+
+Start-Sleep -Seconds 60
 
 #####################################################################
 # Onboarding cluster to Azure Arc
