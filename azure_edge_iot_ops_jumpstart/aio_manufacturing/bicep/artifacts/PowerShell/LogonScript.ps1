@@ -260,6 +260,20 @@ Write-Host
 # ##############################################################
 Write-Host "[$(Get-Date -Format t)] INFO: Fetching the latest AKS Edge Essentials release." -ForegroundColor DarkGreen
 
+Set-ExecutionPolicy Bypass -Scope Process -Force
+# Download the AksEdgeDeploy modules from Azure/AksEdge
+$url = "https://github.com/Azure/AKS-Edge/archive/$aksEdgeDeployModules.zip"
+$zipFile = "$aksEdgeDeployModules.zip"
+$installDir = "$aioToolsDir\AksEdgeScript"
+$workDir = "$installDir\AKS-Edge-main"
+
+if (-not (Test-Path -Path $installDir)) {
+    Write-Host "Creating $installDir..."
+    New-Item -Path "$installDir" -ItemType Directory | Out-Null
+}
+
+Push-Location $installDir
+
 $guid = ([System.Guid]::NewGuid()).ToString().subString(0, 5).ToLower()
 $arcClusterName = "aio-$guid"
 
