@@ -258,6 +258,8 @@ Write-Host
 # Onboarding cluster to Azure Arc
 #####################################################################
 
+Copy-Item "C:\Program Files\AksEdge\kubectl\kubectl.exe" -Destination "$env:USERPROFILE\.azure\kubectl-client\" -Force
+
 # Onboarding the cluster to Azure Arc
 Write-Host "[$(Get-Date -Format t)] INFO: Onboarding the AKS Edge Essentials cluster to Azure Arc..." -ForegroundColor DarkGreen
 Write-Host "`n"
