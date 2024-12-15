@@ -264,6 +264,7 @@ Write-Host
 Write-Host "[$(Get-Date -Format t)] INFO: Onboarding the AKS Edge Essentials cluster to Azure Arc..." -ForegroundColor DarkGreen
 Write-Host "`n"
 
+New-Item -ItemType directory -Path "$env:USERPROFILE\.azure\kubectl-client\"
 Copy-Item "C:\Program Files\AksEdge\kubectl\kubectl.exe" -Destination "$env:USERPROFILE\.azure\kubectl-client\kubectl.exe" -Force
 
 $kubectlMonShell = Start-Process -PassThru PowerShell { for (0 -lt 1) { kubectl get pod -A | Sort-Object -Descending; Start-Sleep -Seconds 5; Clear-Host } }
