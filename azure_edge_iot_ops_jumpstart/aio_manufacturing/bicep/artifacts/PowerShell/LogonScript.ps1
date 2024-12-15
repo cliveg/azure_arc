@@ -177,9 +177,9 @@ else {
 # az version
 az -v
 
-Write-Host "[$(Get-Date -Format t)] INFO: Configuring cluster log size" -ForegroundColor DarkGray
-Invoke-AksEdgeNodeCommand "sudo find /var/log -type f -exec truncate -s ${clusterLogSize} {} +"
-Write-Host "`n"
+# Write-Host "[$(Get-Date -Format t)] INFO: Configuring cluster log size" -ForegroundColor DarkGray
+# Invoke-AksEdgeNodeCommand "sudo find /var/log -type f -exec truncate -s ${clusterLogSize} {} +"
+# Write-Host "`n"
 
 #####################################################################
 # Setup Azure CLI
@@ -267,8 +267,12 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
 .\AksEdgeQuickStartForAio.ps1 -SubscriptionId $subscriptionId -TenantId $spnTenantId -ResourceGroupName $resourceGroup  -Location $location  -ClusterName $arcClusterName -CustomLocationOid $customLocationRPOID
 
 Write-Host "`n"
-Write-Host "[$(Get-Date -Format t)] INFO: ubernetes installed" -ForegroundColor DarkGray
+Write-Host "[$(Get-Date -Format t)] INFO: Kubernetes installed" -ForegroundColor DarkGray
 Write-Host "`n"
+
+# Write-Host "[$(Get-Date -Format t)] INFO: Configuring cluster log size" -ForegroundColor DarkGray
+# Invoke-AksEdgeNodeCommand "sudo find /var/log -type f -exec truncate -s ${clusterLogSize} {} +"
+# Write-Host "`n"
 
 Start-Sleep -Seconds 60
 
