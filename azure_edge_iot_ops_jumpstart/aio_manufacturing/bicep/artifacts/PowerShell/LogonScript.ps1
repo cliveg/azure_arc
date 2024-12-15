@@ -260,6 +260,9 @@ Write-Host
 # ##############################################################
 Write-Host "[$(Get-Date -Format t)] INFO: Fetching the latest AKS Edge Essentials release." -ForegroundColor DarkGreen
 
+$guid = ([System.Guid]::NewGuid()).ToString().subString(0, 5).ToLower()
+$arcClusterName = "aio-$guid"
+
 $url = "https://raw.githubusercontent.com/Azure/AKS-Edge/main/tools/scripts/AksEdgeQuickStart/AksEdgeQuickStartForAio.ps1"
 Invoke-WebRequest -Uri $url -OutFile .\AksEdgeQuickStartForAio.ps1
 Unblock-File .\AksEdgeQuickStartForAio.ps1
@@ -300,8 +303,8 @@ $kubectlMonShell = Start-Process -PassThru PowerShell { for (0 -lt 1) { kubectl 
 #Tag
 $clusterId = $(kubectl get configmap -n aksedge aksedge -o jsonpath="{.data.clustername}")
 
-$guid = ([System.Guid]::NewGuid()).ToString().subString(0, 5).ToLower()
-$arcClusterName = "aio-$guid"
+# $guid = ([System.Guid]::NewGuid()).ToString().subString(0, 5).ToLower()
+# $arcClusterName = "aio-$guid"
 
 
 if ($env:kubernetesDistribution -eq "k8s") {
