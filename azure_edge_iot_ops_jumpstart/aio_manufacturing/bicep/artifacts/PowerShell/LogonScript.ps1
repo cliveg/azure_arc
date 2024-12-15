@@ -57,115 +57,125 @@ else {
 # AKS EE setup
 ##############################################################
 Write-Host "[$(Get-Date -Format t)] INFO: Fetching the latest AKS Edge Essentials release." -ForegroundColor DarkGreen
-$latestReleaseTag = (Invoke-WebRequest $aksEEReleasesUrl | ConvertFrom-Json)[0].tag_name
-$AKSEEReleaseDownloadUrl = "https://github.com/Azure/AKS-Edge/archive/refs/tags/$latestReleaseTag.zip"
-$output = Join-Path $aioTempDir "$latestReleaseTag.zip"
-Invoke-WebRequest $AKSEEReleaseDownloadUrl -OutFile $output
-Expand-Archive $output -DestinationPath $aioTempDir -Force
-$AKSEEReleaseConfigFilePath = "$aioTempDir\AKS-Edge-$latestReleaseTag\tools\aksedge-config.json"
-$jsonContent = Get-Content -Raw -Path $AKSEEReleaseConfigFilePath | ConvertFrom-Json
-$schemaVersionAksEdgeConfig = $jsonContent.SchemaVersion
-# Clean up the downloaded release files
-Remove-Item -Path $output -Force
-Remove-Item -Path "$aioTempDir\AKS-Edge-$latestReleaseTag" -Force -Recurse
 
-# Create AKSEE configuration files
-Write-host "[$(Get-Date -Format t)] INFO: Creating AKS Edge Essentials configuration files" -ForegroundColor DarkGreen
+$url = "https://raw.githubusercontent.com/Azure/AKS-Edge/main/tools/scripts/AksEdgeQuickStart/AksEdgeQuickStartForAio.ps1"
+Invoke-WebRequest -Uri $url -OutFile .\AksEdgeQuickStartForAio.ps1
+Unblock-File .\AksEdgeQuickStartForAio.ps1
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+$ARC_APP_OBJECT_ID=(az ad sp show --id bc313c14-388c-4e7d-a58e-70017303ee3b --query id -o tsv)
+write-host "customLocationRPOID = $customLocationRPOID"
+write-host "ARC_APP_OBJECT_ID = $ARC_APP_OBJECT_ID"
+.\AksEdgeQuickStartForAio.ps1 -SubscriptionId $subscriptionId -TenantId $spnTenantId -ResourceGroupName $resourceGroup  -Location $location  -ClusterName $arcClusterName -CustomLocationOid $ARC_APP_OBJECT_ID
 
-$aideuserConfig.AksEdgeProduct = $productName
-$aideuserConfig.Azure.Location = $location
-$aideuserConfig.Azure.SubscriptionId = $subscriptionId
-$aideuserConfig.Azure.TenantId = $spnTenantId
-$aideuserConfig.Azure.ResourceGroupName = $resourceGroup
-$aideuserConfig = $aideuserConfig | ConvertTo-Json -Depth 20
+# $latestReleaseTag = (Invoke-WebRequest $aksEEReleasesUrl | ConvertFrom-Json)[0].tag_name
+# $AKSEEReleaseDownloadUrl = "https://github.com/Azure/AKS-Edge/archive/refs/tags/$latestReleaseTag.zip"
+# $output = Join-Path $aioTempDir "$latestReleaseTag.zip"
+# Invoke-WebRequest $AKSEEReleaseDownloadUrl -OutFile $output
+# Expand-Archive $output -DestinationPath $aioTempDir -Force
+# $AKSEEReleaseConfigFilePath = "$aioTempDir\AKS-Edge-$latestReleaseTag\tools\aksedge-config.json"
+# $jsonContent = Get-Content -Raw -Path $AKSEEReleaseConfigFilePath | ConvertFrom-Json
+# $schemaVersionAksEdgeConfig = $jsonContent.SchemaVersion
+# # Clean up the downloaded release files
+# Remove-Item -Path $output -Force
+# Remove-Item -Path "$aioTempDir\AKS-Edge-$latestReleaseTag" -Force -Recurse
+
+# # Create AKSEE configuration files
+# Write-host "[$(Get-Date -Format t)] INFO: Creating AKS Edge Essentials configuration files" -ForegroundColor DarkGreen
+
+# $aideuserConfig.AksEdgeProduct = $productName
+# $aideuserConfig.Azure.Location = $location
+# $aideuserConfig.Azure.SubscriptionId = $subscriptionId
+# $aideuserConfig.Azure.TenantId = $spnTenantId
+# $aideuserConfig.Azure.ResourceGroupName = $resourceGroup
+# $aideuserConfig = $aideuserConfig | ConvertTo-Json -Depth 20
 
 
-$aksedgeConfig.SchemaVersion = $schemaVersionAksEdgeConfig
-$aksedgeConfig.Network.NetworkPlugin = $networkplugin
+# $aksedgeConfig.SchemaVersion = $schemaVersionAksEdgeConfig
+# $aksedgeConfig.Network.NetworkPlugin = $networkplugin
 
-if ($env:windowsNode -eq $true) {
-    $aksedgeConfig.Machines += @{
-        'LinuxNode'   = $aksEdgeNodes["LinuxNode"]
-        'WindowsNode' = $aksEdgeNodes["WindowsNode"]
-    }
-}
-else {
-    $aksedgeConfig.Machines += @{
-        'LinuxNode' = $aksEdgeNodes["LinuxNode"]
-    }
-}
+# if ($env:windowsNode -eq $true) {
+#     $aksedgeConfig.Machines += @{
+#         'LinuxNode'   = $aksEdgeNodes["LinuxNode"]
+#         'WindowsNode' = $aksEdgeNodes["WindowsNode"]
+#     }
+# }
+# else {
+#     $aksedgeConfig.Machines += @{
+#         'LinuxNode' = $aksEdgeNodes["LinuxNode"]
+#     }
+# }
 
-$aksedgeConfig = $aksedgeConfig | ConvertTo-Json -Depth 20
+# $aksedgeConfig = $aksedgeConfig | ConvertTo-Json -Depth 20
 
-Set-ExecutionPolicy Bypass -Scope Process -Force
-# Download the AksEdgeDeploy modules from Azure/AksEdge
-$url = "https://github.com/Azure/AKS-Edge/archive/$aksEdgeDeployModules.zip"
-$zipFile = "$aksEdgeDeployModules.zip"
-$installDir = "$aioToolsDir\AksEdgeScript"
-$workDir = "$installDir\AKS-Edge-main"
+# Set-ExecutionPolicy Bypass -Scope Process -Force
+# # Download the AksEdgeDeploy modules from Azure/AksEdge
+# $url = "https://github.com/Azure/AKS-Edge/archive/$aksEdgeDeployModules.zip"
+# $zipFile = "$aksEdgeDeployModules.zip"
+# $installDir = "$aioToolsDir\AksEdgeScript"
+# $workDir = "$installDir\AKS-Edge-main"
 
-if (-not (Test-Path -Path $installDir)) {
-    Write-Host "Creating $installDir..."
-    New-Item -Path "$installDir" -ItemType Directory | Out-Null
-}
+# if (-not (Test-Path -Path $installDir)) {
+#     Write-Host "Creating $installDir..."
+#     New-Item -Path "$installDir" -ItemType Directory | Out-Null
+# }
 
-Push-Location $installDir
+# Push-Location $installDir
 
-Write-Host "`n"
-Write-Host "[$(Get-Date -Format t)] INFO: Installing AKS Edge Essentials, this will take a few minutes." -ForegroundColor DarkGreen
-Write-Host "`n"
+# Write-Host "`n"
+# Write-Host "[$(Get-Date -Format t)] INFO: Installing AKS Edge Essentials, this will take a few minutes." -ForegroundColor DarkGreen
+# Write-Host "`n"
 
-try {
-    function download2() { $ProgressPreference = "SilentlyContinue"; Invoke-WebRequest -Uri $url -OutFile $installDir\$zipFile }
-    download2
-}
-catch {
-    Write-Host "[$(Get-Date -Format t)] ERROR: Downloading Aide Powershell Modules failed" -ForegroundColor Red
-    Stop-Transcript | Out-Null
-    Pop-Location
-    exit -1
-}
+# try {
+#     function download2() { $ProgressPreference = "SilentlyContinue"; Invoke-WebRequest -Uri $url -OutFile $installDir\$zipFile }
+#     download2
+# }
+# catch {
+#     Write-Host "[$(Get-Date -Format t)] ERROR: Downloading Aide Powershell Modules failed" -ForegroundColor Red
+#     Stop-Transcript | Out-Null
+#     Pop-Location
+#     exit -1
+# }
 
-if (!(Test-Path -Path "$workDir")) {
-    Expand-Archive -Path $installDir\$zipFile -DestinationPath "$installDir" -Force
-}
+# if (!(Test-Path -Path "$workDir")) {
+#     Expand-Archive -Path $installDir\$zipFile -DestinationPath "$installDir" -Force
+# }
 
-$aidejson = (Get-ChildItem -Path "$workDir" -Filter aide-userconfig.json -Recurse).FullName
-Set-Content -Path $aidejson -Value $aideuserConfig -Force
-$aksedgejson = (Get-ChildItem -Path "$workDir" -Filter aksedge-config.json -Recurse).FullName
-Set-Content -Path $aksedgejson -Value $aksedgeConfig -Force
+# $aidejson = (Get-ChildItem -Path "$workDir" -Filter aide-userconfig.json -Recurse).FullName
+# Set-Content -Path $aidejson -Value $aideuserConfig -Force
+# $aksedgejson = (Get-ChildItem -Path "$workDir" -Filter aksedge-config.json -Recurse).FullName
+# Set-Content -Path $aksedgejson -Value $aksedgeConfig -Force
 
-$aksedgeShell = (Get-ChildItem -Path "$workDir" -Filter AksEdgeShell.ps1 -Recurse).FullName
-. $aksedgeShell
+# $aksedgeShell = (Get-ChildItem -Path "$workDir" -Filter AksEdgeShell.ps1 -Recurse).FullName
+# . $aksedgeShell
 
-# Download, install and deploy AKS EE
-Write-Host "[$(Get-Date -Format t)] INFO: Step 2: Download, install and deploy AKS Edge Essentials" -ForegroundColor DarkGray
-# invoke the workflow, the json file already stored above.
-$retval = Start-AideWorkflow -jsonFile $aidejson
-# report error via Write-Error for Intune to show proper status
-if ($retval) {
-    Write-Host "[$(Get-Date -Format t)] INFO: Deployment Successful. " -ForegroundColor Green
-}
-else {
-    Write-Host -Message "[$(Get-Date -Format t)] Error: Deployment failed" -Category OperationStopped
-    Stop-Transcript | Out-Null
-    Pop-Location
-    exit -1
-}
+# # Download, install and deploy AKS EE
+# Write-Host "[$(Get-Date -Format t)] INFO: Step 2: Download, install and deploy AKS Edge Essentials" -ForegroundColor DarkGray
+# # invoke the workflow, the json file already stored above.
+# $retval = Start-AideWorkflow -jsonFile $aidejson
+# # report error via Write-Error for Intune to show proper status
+# if ($retval) {
+#     Write-Host "[$(Get-Date -Format t)] INFO: Deployment Successful. " -ForegroundColor Green
+# }
+# else {
+#     Write-Host -Message "[$(Get-Date -Format t)] Error: Deployment failed" -Category OperationStopped
+#     Stop-Transcript | Out-Null
+#     Pop-Location
+#     exit -1
+# }
 
-if ($env:windowsNode -eq $true) {
-    # Get a list of all nodes in the cluster
-    $nodes = kubectl get nodes -o json | ConvertFrom-Json
+# if ($env:windowsNode -eq $true) {
+#     # Get a list of all nodes in the cluster
+#     $nodes = kubectl get nodes -o json | ConvertFrom-Json
 
-    # Loop through each node and check the OSImage field
-    foreach ($node in $nodes.items) {
-        $os = $node.status.nodeInfo.osImage
-        if ($os -like '*windows*') {
-            # If the OSImage field contains "windows", assign the "worker" role
-            kubectl label nodes $node.metadata.name node-role.kubernetes.io/worker=worker
-        }
-    }
-}
+#     # Loop through each node and check the OSImage field
+#     foreach ($node in $nodes.items) {
+#         $os = $node.status.nodeInfo.osImage
+#         if ($os -like '*windows*') {
+#             # If the OSImage field contains "windows", assign the "worker" role
+#             kubectl label nodes $node.metadata.name node-role.kubernetes.io/worker=worker
+#         }
+#     }
+# }
 
 Write-Host "`n"
 Write-Host "[$(Get-Date -Format t)] INFO: Checking kubernetes nodes" -ForegroundColor DarkGray
