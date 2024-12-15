@@ -176,8 +176,6 @@ Write-Host "`n"
 # az version
 az -v
 
-Copy-Item "C:\Program Files\AksEdge\kubectl\kubectl.exe" -Destination "$env:USERPROFILE\.azure\kubectl-client\kubectl.exe" -Force
-
 Write-Host "[$(Get-Date -Format t)] INFO: Configuring cluster log size" -ForegroundColor DarkGray
 Invoke-AksEdgeNodeCommand "sudo find /var/log -type f -exec truncate -s ${clusterLogSize} {} +"
 Write-Host "`n"
