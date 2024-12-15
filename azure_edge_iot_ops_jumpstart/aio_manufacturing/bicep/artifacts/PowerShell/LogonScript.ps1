@@ -301,13 +301,13 @@ Write-Host "`n"
 
 Start-Sleep -Seconds 60
 
-#####################################################################
-# Onboarding cluster to Azure Arc
-#####################################################################
+# #####################################################################
+# # Onboarding cluster to Azure Arc
+# #####################################################################
 
-# Onboarding the cluster to Azure Arc
-Write-Host "[$(Get-Date -Format t)] INFO: Onboarding the AKS Edge Essentials cluster to Azure Arc..." -ForegroundColor DarkGreen
-Write-Host "`n"
+# # Onboarding the cluster to Azure Arc
+# Write-Host "[$(Get-Date -Format t)] INFO: Onboarding the AKS Edge Essentials cluster to Azure Arc..." -ForegroundColor DarkGreen
+# Write-Host "`n"
 
 New-Item -ItemType directory -Path "$env:USERPROFILE\.azure\kubectl-client\"
 Copy-Item "C:\Program Files\AksEdge\kubectl\kubectl.exe" -Destination "$env:USERPROFILE\.azure\kubectl-client\kubectl.exe" -Force
@@ -321,22 +321,22 @@ $clusterId = $(kubectl get configmap -n aksedge aksedge -o jsonpath="{.data.clus
 # $arcClusterName = "aio-$guid"
 
 
-if ($env:kubernetesDistribution -eq "k8s") {
-    az connectedk8s connect --name $arcClusterName `
-        --resource-group $resourceGroup `
-        --location $location `
-        --distribution aks_edge_k8s `
-        --tags "Project=jumpstart_azure_arc_k8s" "ClusterId=$clusterId" `
-        --correlation-id "d009f5dd-dba8-4ac7-bac9-b54ef3a6671a"
-}
-else {
-    az connectedk8s connect --name $arcClusterName `
-        --resource-group $resourceGroup `
-        --location $location `
-        --distribution aks_edge_k3s `
-        --tags "Project=jumpstart_azure_arc_k8s" "ClusterId=$clusterId" `
-        --correlation-id "d009f5dd-dba8-4ac7-bac9-b54ef3a6671a"
-}
+# if ($env:kubernetesDistribution -eq "k8s") {
+#     az connectedk8s connect --name $arcClusterName `
+#         --resource-group $resourceGroup `
+#         --location $location `
+#         --distribution aks_edge_k8s `
+#         --tags "Project=jumpstart_azure_arc_k8s" "ClusterId=$clusterId" `
+#         --correlation-id "d009f5dd-dba8-4ac7-bac9-b54ef3a6671a"
+# }
+# else {
+#     az connectedk8s connect --name $arcClusterName `
+#         --resource-group $resourceGroup `
+#         --location $location `
+#         --distribution aks_edge_k3s `
+#         --tags "Project=jumpstart_azure_arc_k8s" "ClusterId=$clusterId" `
+#         --correlation-id "d009f5dd-dba8-4ac7-bac9-b54ef3a6671a"
+# }
 
 Write-Host "`n"
 Write-Host "[$(Get-Date -Format t)] INFO: Create Azure Monitor for containers Kubernetes extension instance" -ForegroundColor DarkGray
